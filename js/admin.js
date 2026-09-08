@@ -321,7 +321,10 @@ inputPolicyForm.addEventListener("submit", async (event) => {
     setInputPolicyStatus("受付設定を保存しました。住民画面にも反映されます。");
   } catch (error) {
     console.error("受付設定の保存に失敗しました:", error);
-    setInputPolicyStatus(error.message || "受付設定を保存できませんでした。", "error");
+    const message = error?.code === "permission-denied"
+      ? "保存権限がありません。Firebase ConsoleのFirestoreルールを最新版に更新して公開してください。"
+      : error.message || "受付設定を保存できませんでした。";
+    setInputPolicyStatus(message, "error");
   } finally {
     saveInputPolicyButton.disabled = false;
   }
