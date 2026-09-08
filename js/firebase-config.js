@@ -20,14 +20,15 @@ import {
   setDoc,
 } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 
-// Firebase Console > プロジェクトの設定 > マイアプリ で表示される値に置き換えてください。
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: "AIzaSyDYIYWHaHA1C6NSySqan-Kxlw2tUP3Ba3E",
-  authDomain: "greenbird-kokura-map.firebaseapp.com",
-  projectId: "greenbird-kokura-map",
-  storageBucket: "greenbird-kokura-map.firebasestorage.app",
-  messagingSenderId: "202076525194",
-  appId: "1:202076525194:web:279d8eba1c7e22dfb65373",
+  apiKey: "AIzaSyD6_ol4suLlaV5-Lby9ybTAX59L8nhITFM",
+  authDomain: "greenbird-kokura-map-c108d.firebaseapp.com",
+  projectId: "greenbird-kokura-map-c108d",
+  storageBucket: "greenbird-kokura-map-c108d.firebasestorage.app",
+  messagingSenderId: "977537889897",
+  appId: "1:977537889897:web:a8c8d21c6d9e81c4ae54f8",
+  measurementId: "G-ZMYC1F19K0"
 };
 
 export const isFirebaseConfigured = !Object.values(firebaseConfig).some((value) =>
