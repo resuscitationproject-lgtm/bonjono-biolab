@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#15803d">
+    <title>BONJONO 地域環境マップ</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="./css/leaflet.css">
+    <style>
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+      }
+
+      #map {
+        height: calc(100dvh - 64px);
+      }
+    </style>
+  </head>
+  <body class="overflow-hidden bg-slate-100 text-slate-900">
+    <header class="flex h-16 items-center justify-between gap-3 bg-green-700 px-4 text-white shadow-md">
+      <div>
+        <h1 class="text-base font-bold sm:text-xl">BONJONO</h1>
+        <p class="hidden text-xs text-green-100 sm:block">地域環境マップ</p>
+      </div>
+      <div class="flex shrink-0 gap-2">
+        <a
+          href="./nature-input.html"
+          class="rounded-lg bg-green-800 px-3 py-2 text-sm font-bold text-white transition hover:bg-green-900 focus:outline-none focus:ring-2 focus:ring-white"
+        >
+          自然観察を記録
+        </a>
+        <a
+          href="./admin.html"
+          class="rounded-lg bg-green-800 px-3 py-2 text-sm font-bold text-white transition hover:bg-green-900 focus:outline-none focus:ring-2 focus:ring-white"
+        >
+          管理
+        </a>
+        <a
+          href="./input.html"
+          class="rounded-lg bg-white px-3 py-2 text-sm font-bold text-green-800 shadow transition hover:bg-green-50 focus:outline-none focus:ring-2 focus:ring-white"
+        >
+          ＋ 清掃活動を記録
+        </a>
+      </div>
+    </header>
+
+    <main class="relative">
+      <div id="map" aria-label="ゴミ拾い報告のヒートマップ"></div>
+      <div
+        id="map-status"
+        class="absolute left-1/2 top-4 z-[1000] -translate-x-1/2 rounded-lg bg-white/95 px-4 py-2 text-sm font-medium shadow"
+        role="status"
+      >
+        データを読み込んでいます…
+      </div>
+      <aside
+        class="absolute bottom-6 left-3 z-[1000] w-48 rounded-xl bg-white/95 p-3 shadow-lg backdrop-blur-sm sm:w-56"
+        aria-label="制作元"
+      >
+        <p class="text-[10px] font-bold tracking-wider text-slate-500">制作元</p>
+        <img
+          src="./assets/kitakyushu-it-club-logo.png"
+          alt="北九州ITクラブ"
+          class="mt-1 h-auto w-28"
+        >
+        <p class="mt-2 text-xs font-bold leading-relaxed text-slate-700">
+          光井企画工学事務所<br>
+          北九州ITクラブ
+        </p>
+      </aside>
+    </main>
+
+    <script
+      src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+      integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+      crossorigin=""
+    ></script>
+    <script src="https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js"></script>
+    <script type="module" src="./js/app.js"></script>
+  </body>
+</html>

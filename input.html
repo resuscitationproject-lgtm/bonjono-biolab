@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#15803d">
+    <title>清掃活動を記録 | BONJONO</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="min-h-dvh bg-green-50 text-slate-900">
+    <header class="bg-green-700 px-4 py-4 text-white shadow-md">
+      <div class="mx-auto flex max-w-xl items-center gap-4">
+        <a
+          href="./index.html"
+          class="rounded-lg bg-green-800 px-3 py-2 text-sm font-bold hover:bg-green-900 focus:outline-none focus:ring-2 focus:ring-white"
+        >
+          ← マップに戻る
+        </a>
+        <h1 class="text-lg font-bold">清掃活動を記録</h1>
+      </div>
+    </header>
+
+    <main class="mx-auto max-w-xl p-4">
+      <section id="input-window-status" class="mb-4 rounded-2xl bg-white p-4 shadow" role="status">
+        <p class="text-sm font-bold text-slate-700">受付状況を確認しています…</p>
+      </section>
+      <form id="report-form" class="space-y-6 rounded-2xl bg-white p-5 shadow-lg">
+        <section aria-labelledby="location-title">
+          <h2 id="location-title" class="mb-3 text-base font-bold">1. 現在地</h2>
+          <button
+            id="get-location"
+            type="button"
+            class="w-full rounded-xl bg-blue-600 px-4 py-3 font-bold text-white shadow hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-200 disabled:cursor-wait disabled:opacity-60"
+          >
+            📍 現在地をGPSで取得
+          </button>
+          <p id="location-status" class="mt-2 text-sm text-slate-600" role="status">
+            位置情報はまだ取得されていません。
+          </p>
+          <div class="mt-3 grid grid-cols-2 gap-3">
+            <label class="text-sm font-medium">
+              緯度
+              <input id="latitude" class="mt-1 w-full rounded-lg border border-slate-300 bg-slate-100 p-2" readonly>
+            </label>
+            <label class="text-sm font-medium">
+              経度
+              <input id="longitude" class="mt-1 w-full rounded-lg border border-slate-300 bg-slate-100 p-2" readonly>
+            </label>
+          </div>
+        </section>
+
+        <fieldset>
+          <legend class="mb-3 text-base font-bold">2. ゴミの量</legend>
+          <div class="grid grid-cols-5 gap-2">
+            <label class="cursor-pointer">
+              <input class="peer sr-only" type="radio" name="amount" value="1">
+              <span class="flex min-h-14 items-center justify-center rounded-xl border-2 border-slate-200 font-bold peer-checked:border-green-600 peer-checked:bg-green-100">1</span>
+            </label>
+            <label class="cursor-pointer">
+              <input class="peer sr-only" type="radio" name="amount" value="2">
+              <span class="flex min-h-14 items-center justify-center rounded-xl border-2 border-slate-200 font-bold peer-checked:border-green-600 peer-checked:bg-green-100">2</span>
+            </label>
+            <label class="cursor-pointer">
+              <input class="peer sr-only" type="radio" name="amount" value="3" checked>
+              <span class="flex min-h-14 items-center justify-center rounded-xl border-2 border-slate-200 font-bold peer-checked:border-green-600 peer-checked:bg-green-100">3</span>
+            </label>
+            <label class="cursor-pointer">
+              <input class="peer sr-only" type="radio" name="amount" value="4">
+              <span class="flex min-h-14 items-center justify-center rounded-xl border-2 border-slate-200 font-bold peer-checked:border-green-600 peer-checked:bg-green-100">4</span>
+            </label>
+            <label class="cursor-pointer">
+              <input class="peer sr-only" type="radio" name="amount" value="5">
+              <span class="flex min-h-14 items-center justify-center rounded-xl border-2 border-slate-200 font-bold peer-checked:border-green-600 peer-checked:bg-green-100">5</span>
+            </label>
+          </div>
+          <div class="mt-2 flex justify-between text-xs text-slate-500">
+            <span>少ない</span>
+            <span>3: ゴミ袋1袋程度</span>
+            <span>非常に多い</span>
+          </div>
+        </fieldset>
+
+        <section aria-labelledby="memo-title">
+          <div class="mb-2 flex items-end justify-between">
+            <h2 id="memo-title" class="text-base font-bold">3. ひとことメモ（任意）</h2>
+            <span id="memo-count" class="text-xs text-slate-500">0 / 200</span>
+          </div>
+          <textarea
+            id="memo"
+            maxlength="200"
+            rows="4"
+            class="w-full rounded-xl border border-slate-300 p-3 focus:border-green-600 focus:outline-none focus:ring-4 focus:ring-green-100"
+            placeholder="例：タバコの吸い殻が多い"
+          ></textarea>
+        </section>
+
+        <p id="form-error" class="hidden rounded-lg bg-red-50 p-3 text-sm font-medium text-red-700" role="alert"></p>
+
+        <button
+          id="submit-report"
+          type="submit"
+          class="w-full rounded-xl bg-green-700 px-4 py-4 text-lg font-bold text-white shadow hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-green-200 disabled:cursor-not-allowed disabled:opacity-60"
+        >
+          報告を送信する
+        </button>
+      </form>
+    </main>
+
+    <script type="module" src="./js/input.js"></script>
+  </body>
+</html>

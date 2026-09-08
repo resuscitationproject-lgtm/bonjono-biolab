@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0f766e">
+    <title>自然観察を記録 | BONJONO</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="min-h-dvh bg-teal-50 text-slate-900">
+    <header class="bg-teal-700 px-4 py-4 text-white shadow-md">
+      <div class="mx-auto flex max-w-xl items-center gap-4">
+        <a href="./index.html" class="rounded-lg bg-teal-800 px-3 py-2 text-sm font-bold hover:bg-teal-900 focus:outline-none focus:ring-2 focus:ring-white">
+          ← マップに戻る
+        </a>
+        <h1 class="text-lg font-bold">自然観察を記録</h1>
+      </div>
+    </header>
+
+    <main class="mx-auto max-w-xl p-4">
+      <section id="input-window-status" class="mb-4 rounded-2xl bg-white p-4 shadow" role="status">
+        <p class="text-sm font-bold text-slate-700">受付状況を確認しています…</p>
+      </section>
+
+      <form id="observation-form" class="hidden space-y-6 rounded-2xl bg-white p-5 shadow-lg">
+        <section aria-labelledby="location-title">
+          <h2 id="location-title" class="mb-3 text-base font-bold">1. 観察場所</h2>
+          <button id="get-location" type="button" class="w-full rounded-xl bg-blue-600 px-4 py-3 font-bold text-white shadow hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-200 disabled:cursor-wait disabled:opacity-60">
+            📍 現在地をGPSで取得
+          </button>
+          <p id="location-status" class="mt-2 text-sm text-slate-600" role="status">位置情報はまだ取得されていません。</p>
+          <div class="mt-3 grid grid-cols-2 gap-3">
+            <label class="text-sm font-medium">緯度<input id="latitude" class="mt-1 w-full rounded-lg border border-slate-300 bg-slate-100 p-2" readonly></label>
+            <label class="text-sm font-medium">経度<input id="longitude" class="mt-1 w-full rounded-lg border border-slate-300 bg-slate-100 p-2" readonly></label>
+          </div>
+        </section>
+
+        <fieldset>
+          <legend class="mb-3 text-base font-bold">2. 観察したもの</legend>
+          <label class="block text-sm font-medium">分類
+            <select id="category" class="mt-1 w-full rounded-lg border border-slate-300 p-3">
+              <option value="bird">鳥</option>
+              <option value="insect">昆虫</option>
+              <option value="water">水生生物</option>
+              <option value="amphibian">カエル・両生類</option>
+              <option value="plant">植物</option>
+              <option value="other">その他</option>
+            </select>
+          </label>
+          <label class="mt-3 block text-sm font-medium">名前（不明でも可）
+            <input id="name" maxlength="100" required class="mt-1 w-full rounded-lg border border-slate-300 p-3" placeholder="例：トンボの仲間">
+          </label>
+          <label class="mt-3 block text-sm font-medium">見つけた数（おおよそ）
+            <input id="count" type="number" min="1" max="999" value="1" required class="mt-1 w-full rounded-lg border border-slate-300 p-3">
+          </label>
+        </fieldset>
+
+        <label class="block text-sm font-medium">観察メモ（任意）
+          <textarea id="memo" maxlength="200" rows="4" class="mt-1 w-full rounded-xl border border-slate-300 p-3" placeholder="例：池の北側で午前中に確認"></textarea>
+        </label>
+
+        <p id="form-error" class="hidden rounded-lg bg-red-50 p-3 text-sm font-medium text-red-700" role="alert"></p>
+        <button id="submit-observation" type="submit" class="w-full rounded-xl bg-teal-700 px-4 py-4 text-lg font-bold text-white shadow hover:bg-teal-800 focus:outline-none focus:ring-4 focus:ring-teal-200 disabled:cursor-not-allowed disabled:opacity-60">
+          観察を登録する
+        </button>
+      </form>
+    </main>
+
+    <script type="module" src="./js/nature-input.js"></script>
+  </body>
+</html>

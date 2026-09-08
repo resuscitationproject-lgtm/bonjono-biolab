@@ -1,0 +1,112 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isAdmin() {
+      return request.auth != null
+        && exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+    }
+
+    function isTimestamp(value) {
+      return value is timestamp;
+    }
+
+    function isInputPolicy(data) {
+      return data.keys().hasOnly([
+          'cleanupEnabled', 'cleanupStartAt', 'cleanupEndAt', 'cleanupMessage',
+          'natureEnabled', 'natureStartAt', 'natureEndAt', 'natureMessage'
+        ])
+        && data.cleanupEnabled is bool
+        && (data.cleanupStartAt == null || isTimestamp(data.cleanupStartAt))
+        && (data.cleanupEndAt == null || isTimestamp(data.cleanupEndAt))
+        && (!data.cleanupEnabled
+          || (data.cleanupStartAt is timestamp
+            && data.cleanupEndAt is timestamp
+            && data.cleanupStartAt < data.cleanupEndAt))
+        && data.cleanupMessage is string
+        && data.cleanupMessage.size() <= 200
+        && data.natureEnabled is bool
+        && (data.natureStartAt == null || isTimestamp(data.natureStartAt))
+        && (data.natureEndAt == null || isTimestamp(data.natureEndAt))
+        && (!data.natureEnabled
+          || (data.natureStartAt is timestamp
+            && data.natureEndAt is timestamp
+            && data.natureStartAt < data.natureEndAt))
+        && data.natureMessage is string
+        && data.natureMessage.size() <= 200;
+    }
+
+    function isCleanupInputOpen() {
+      return exists(/databases/$(database)/documents/settings/input_policy)
+        && get(/databases/$(database)/documents/settings/input_policy).data.cleanupEnabled == true
+        && get(/databases/$(database)/documents/settings/input_policy).data.cleanupStartAt is timestamp
+        && get(/databases/$(database)/documents/settings/input_policy).data.cleanupEndAt is timestamp
+        && request.time >= get(/databases/$(database)/documents/settings/input_policy).data.cleanupStartAt
+        && request.time <= get(/databases/$(database)/documents/settings/input_policy).data.cleanupEndAt;
+    }
+
+    function isNatureInputOpen() {
+      return exists(/databases/$(database)/documents/settings/input_policy)
+        && get(/databases/$(database)/documents/settings/input_policy).data.natureEnabled == true
+        && get(/databases/$(database)/documents/settings/input_policy).data.natureStartAt is timestamp
+        && get(/databases/$(database)/documents/settings/input_policy).data.natureEndAt is timestamp
+        && request.time >= get(/databases/$(database)/documents/settings/input_policy).data.natureStartAt
+        && request.time <= get(/databases/$(database)/documents/settings/input_policy).data.natureEndAt;
+    }
+
+    match /admins/{userId} {
+      allow read: if request.auth != null && request.auth.uid == userId;
+      allow write: if false;
+    }
+
+    match /settings/input_policy {
+      allow read: if true;
+      allow create, update: if isAdmin() && isInputPolicy(request.resource.data);
+      allow delete: if false;
+    }
+
+    match /trash_reports/{reportId} {
+      allow read: if true;
+      allow create: if (isAdmin() || isCleanupInputOpen())
+        && request.resource.data.keys().hasAll(['date', 'location', 'amount'])
+        && request.resource.data.keys().hasOnly(['date', 'location', 'amount', 'memo'])
+        && request.resource.data.date == request.time
+        && request.resource.data.location is latlng
+        && request.resource.data.amount is int
+        && request.resource.data.amount >= 1
+        && request.resource.data.amount <= 5
+        && (
+          !request.resource.data.keys().hasAny(['memo'])
+          || (
+            request.resource.data.memo is string
+            && request.resource.data.memo.size() <= 200
+          )
+        );
+      allow update, delete: if false;
+    }
+
+    match /nature_observations/{observationId} {
+      allow read: if true;
+      allow create: if (isAdmin() || isNatureInputOpen())
+        && request.resource.data.keys().hasAll(['observedAt', 'location', 'category', 'name', 'count'])
+        && request.resource.data.keys().hasOnly(['observedAt', 'location', 'category', 'name', 'count', 'memo'])
+        && request.resource.data.observedAt == request.time
+        && request.resource.data.location is latlng
+        && request.resource.data.category in ['bird', 'insect', 'water', 'amphibian', 'plant', 'other']
+        && request.resource.data.name is string
+        && request.resource.data.name.size() >= 1
+        && request.resource.data.name.size() <= 100
+        && request.resource.data.count is int
+        && request.resource.data.count >= 1
+        && request.resource.data.count <= 999
+        && (
+          !request.resource.data.keys().hasAny(['memo'])
+          || (
+            request.resource.data.memo is string
+            && request.resource.data.memo.size() <= 200
+          )
+        );
+      allow update, delete: if false;
+    }
+  }
+}
