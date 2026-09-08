@@ -7,35 +7,6 @@ service cloud.firestore {
         && exists(/databases/$(database)/documents/admins/$(request.auth.uid));
     }
 
-    function isTimestamp(value) {
-      return value is timestamp;
-    }
-
-    function isInputPolicy(data) {
-      return data.keys().hasOnly([
-          'cleanupEnabled', 'cleanupStartAt', 'cleanupEndAt', 'cleanupMessage',
-          'natureEnabled', 'natureStartAt', 'natureEndAt', 'natureMessage'
-        ])
-        && data.cleanupEnabled is bool
-        && (data.cleanupStartAt == null || isTimestamp(data.cleanupStartAt))
-        && (data.cleanupEndAt == null || isTimestamp(data.cleanupEndAt))
-        && (!data.cleanupEnabled
-          || (data.cleanupStartAt is timestamp
-            && data.cleanupEndAt is timestamp
-            && data.cleanupStartAt < data.cleanupEndAt))
-        && data.cleanupMessage is string
-        && data.cleanupMessage.size() <= 200
-        && data.natureEnabled is bool
-        && (data.natureStartAt == null || isTimestamp(data.natureStartAt))
-        && (data.natureEndAt == null || isTimestamp(data.natureEndAt))
-        && (!data.natureEnabled
-          || (data.natureStartAt is timestamp
-            && data.natureEndAt is timestamp
-            && data.natureStartAt < data.natureEndAt))
-        && data.natureMessage is string
-        && data.natureMessage.size() <= 200;
-    }
-
     function isCleanupInputOpen() {
       return exists(/databases/$(database)/documents/settings/input_policy)
         && get(/databases/$(database)/documents/settings/input_policy).data.cleanupEnabled == true
@@ -61,7 +32,8 @@ service cloud.firestore {
 
     match /settings/input_policy {
       allow read: if true;
-      allow create, update: if isAdmin() && isInputPolicy(request.resource.data);
+      // 受付設定は管理者画面でのみ変更し、入力値の形式は画面側で検証する。
+      allow create, update: if isAdmin();
       allow delete: if false;
     }
 
