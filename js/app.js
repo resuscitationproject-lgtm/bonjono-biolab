@@ -3,8 +3,6 @@ import {
   db,
   getDocs,
   isFirebaseConfigured,
-  orderBy,
-  query,
 } from "./firebase-config.js";
 
 // BONJONOひとまち公園周辺。公式案内の城野駅北側エリアを初期表示する。
@@ -13,7 +11,7 @@ const statusElement = document.querySelector("#map-status");
 
 const map = L.map("map", {
   zoomControl: true,
-}).setView(BONJONO_CENTER, 16);
+}).setView(BONJONO_CENTER, 18);
 
 function refreshMapSize() {
   window.requestAnimationFrame(() => {
@@ -67,6 +65,16 @@ function escapeHtml(value) {
   return element.innerHTML;
 }
 
+function getReadErrorMessage(error, label) {
+  if (error?.code === "permission-denied") {
+    return `${label}の読み込みが拒否されました。Firestoreルールを更新してください。`;
+  }
+  if (error?.code === "failed-precondition") {
+    return `${label}の読み込みに必要なFirestore設定を確認してください。`;
+  }
+  return `${label}を読み込めませんでした。`;
+}
+
 async function renderReports() {
   if (!isFirebaseConfigured) {
     setStatus("Firebaseの設定値を入力すると、報告データが表示されます。", "error");
@@ -74,13 +82,23 @@ async function renderReports() {
   }
 
   try {
-    const [snapshot, observationSnapshot] = await Promise.all([
-      getDocs(query(collection(db, "trash_reports"), orderBy("date", "desc"))),
-      getDocs(query(collection(db, "nature_observations"), orderBy("observedAt", "desc"))),
+    const results = await Promise.allSettled([
+      getDocs(collection(db, "trash_reports")),
+      getDocs(collection(db, "nature_observations")),
     ]);
+    const cleanupResult = results[0];
+    const natureResult = results[1];
+    const snapshot = cleanupResult.status === "fulfilled" ? cleanupResult.value : null;
+    const observationSnapshot = natureResult.status === "fulfilled" ? natureResult.value : null;
+
+    if (!snapshot && !observationSnapshot) {
+      const firstError = cleanupResult.reason || natureResult.reason;
+      throw firstError;
+    }
+
     const heatPoints = [];
 
-    snapshot.forEach((documentSnapshot) => {
+    snapshot?.forEach((documentSnapshot) => {
       const report = documentSnapshot.data();
       const latitude = report.location?.latitude;
       const longitude = report.location?.longitude;
@@ -119,7 +137,7 @@ async function renderReports() {
     });
 
     let observationCount = 0;
-    observationSnapshot.forEach((documentSnapshot) => {
+    observationSnapshot?.forEach((documentSnapshot) => {
       const observation = documentSnapshot.data();
       const latitude = observation.location?.latitude;
       const longitude = observation.location?.longitude;
@@ -159,18 +177,35 @@ async function renderReports() {
       }).addTo(map);
     }
 
+    const failures = [];
+    if (!snapshot) {
+      failures.push(getReadErrorMessage(cleanupResult.reason, "清掃データ"));
+    }
+    if (!observationSnapshot) {
+      failures.push(getReadErrorMessage(natureResult.reason, "自然観察データ"));
+    }
+
     setStatus(
+      failures.length > 0
+        ? `${failures.join(" ")}（表示できるデータは表示しています）`
+        :
       heatPoints.length > 0 || observationCount > 0
         ? `清掃${heatPoints.length}件・自然観察${observationCount}件を表示中`
         : "まだ活動データはありません。",
+      failures.length > 0 ? "error" : "info",
     );
 
-    window.setTimeout(() => {
-      statusElement.classList.add("hidden");
-    }, 3500);
+    if (failures.length === 0) {
+      window.setTimeout(() => {
+        statusElement.classList.add("hidden");
+      }, 3500);
+    }
   } catch (error) {
     console.error("活動データの読み込みに失敗しました:", error);
-    setStatus("データを読み込めませんでした。Firebaseの設定とルールをご確認ください。", "error");
+    setStatus(
+      `${getReadErrorMessage(error, "データ")} Firebaseの設定とルールをご確認ください。`,
+      "error",
+    );
   }
 }
 
