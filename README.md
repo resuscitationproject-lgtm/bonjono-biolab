@@ -10,6 +10,12 @@ GitHub PagesとFirebase Firestoreで動作し、ビルド作業は不要です�
 3. FirebaseプロジェクトにWebアプリを追加します。
 4. 表示された設定値を `js/firebase-config.js` の `firebaseConfig` に貼り付けます。
 5. Firestoreの「ルール」に `firestore.rules` の内容を貼り付けて公開します。
+6. 写真保存を使う場合はFirebase Consoleの「Storage」からバケットを作成し、`storage.rules` の内容をStorageの「ルール」へ貼り付けて公開します。
+
+### 写真保存に関する注意
+
+Cloud Storage for Firebaseは現在、利用開始にBlaze（従量課金）プランの請求先登録が必要です。無料利用枠が適用される場合でも、枠を超えると課金される可能性があるため、Firebase Consoleで予算アラートを設定してください。
+写真は公開マップから閲覧できる設計です。人物の顔、車のナンバー、住所などの個人情報は撮影・投稿しないでください。
 
 ## 管理者モードの準備
 
@@ -69,6 +75,7 @@ https://resuscitationproject-lgtm.github.io/bonjono-biolab/
 ├── nature-input.html
 ├── admin.html
 ├── firestore.rules
+├── storage.rules
 ├── assets/
 │   └── kitakyushu-it-club-logo.png
 └── js/

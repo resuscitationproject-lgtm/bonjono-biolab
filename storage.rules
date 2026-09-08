@@ -1,0 +1,50 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+    function isAdmin() {
+      return request.auth != null
+        && firestore.exists(/databases/(default)/documents/admins/$(request.auth.uid));
+    }
+
+    function isCleanupInputOpen() {
+      return firestore.exists(/databases/(default)/documents/settings/input_policy)
+        && firestore.get(/databases/(default)/documents/settings/input_policy).data.cleanupEnabled == true
+        && firestore.get(/databases/(default)/documents/settings/input_policy).data.cleanupStartAt is timestamp
+        && firestore.get(/databases/(default)/documents/settings/input_policy).data.cleanupEndAt is timestamp
+        && request.time >= firestore.get(/databases/(default)/documents/settings/input_policy).data.cleanupStartAt
+        && request.time <= firestore.get(/databases/(default)/documents/settings/input_policy).data.cleanupEndAt;
+    }
+
+    function isNatureInputOpen() {
+      return firestore.exists(/databases/(default)/documents/settings/input_policy)
+        && firestore.get(/databases/(default)/documents/settings/input_policy).data.natureEnabled == true
+        && firestore.get(/databases/(default)/documents/settings/input_policy).data.natureStartAt is timestamp
+        && firestore.get(/databases/(default)/documents/settings/input_policy).data.natureEndAt is timestamp
+        && request.time >= firestore.get(/databases/(default)/documents/settings/input_policy).data.natureStartAt
+        && request.time <= firestore.get(/databases/(default)/documents/settings/input_policy).data.natureEndAt;
+    }
+
+    function validPhoto() {
+      return request.resource != null
+        && request.resource.size <= 5 * 1024 * 1024
+        && (
+          request.resource.contentType == 'image/jpeg'
+          || request.resource.contentType == 'image/png'
+          || request.resource.contentType == 'image/webp'
+        );
+    }
+
+    match /cleanup_reports/{reportId}/photo {
+      allow read: if true;
+      allow write: if validPhoto() && (isAdmin() || isCleanupInputOpen());
+      allow delete: if false;
+    }
+
+    match /nature_observations/{observationId}/photo {
+      allow read: if true;
+      allow write: if validPhoto() && (isAdmin() || isNatureInputOpen());
+      allow delete: if false;
+    }
+  }
+}

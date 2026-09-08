@@ -59,6 +59,17 @@
           <textarea id="memo" maxlength="200" rows="4" class="mt-1 w-full rounded-xl border border-slate-300 p-3" placeholder="例：池の北側で午前中に確認"></textarea>
         </label>
 
+        <section aria-labelledby="photo-title">
+          <h2 id="photo-title" class="mb-2 text-base font-bold">4. 観察写真（任意）</h2>
+          <input
+            id="photo"
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            class="block w-full rounded-xl border border-slate-300 p-3 text-sm file:mr-3 file:rounded-lg file:border-0 file:bg-teal-100 file:px-3 file:py-2 file:font-bold file:text-teal-800"
+          >
+          <p id="photo-status" class="mt-2 text-xs text-slate-500">JPEG・PNG・WebP、1枚、5MB以内。人の顔や個人情報は写さないでください。</p>
+        </section>
+
         <p id="form-error" class="hidden rounded-lg bg-red-50 p-3 text-sm font-medium text-red-700" role="alert"></p>
         <button id="submit-observation" type="submit" class="w-full rounded-xl bg-teal-700 px-4 py-4 text-lg font-bold text-white shadow hover:bg-teal-800 focus:outline-none focus:ring-4 focus:ring-teal-200 disabled:cursor-not-allowed disabled:opacity-60">
           観察を登録する

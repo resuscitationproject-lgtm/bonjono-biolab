@@ -147,7 +147,7 @@
 
           <section>
             <h2 class="text-lg font-bold">CSV出力</h2>
-            <p class="mt-1 text-sm text-slate-600">日時、緯度、経度、ゴミの量、メモを出力します。</p>
+            <p class="mt-1 text-sm text-slate-600">日時、緯度、経度、ゴミの量、メモ、写真URLを出力します。</p>
             <div class="mt-4 flex flex-wrap gap-3">
               <button id="export-all-csv" type="button" disabled class="rounded-xl bg-blue-600 px-4 py-3 font-bold text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50">
                 全データをCSV出力
@@ -221,6 +221,7 @@
                     <th class="border border-slate-300 p-2">緯度</th>
                     <th class="border border-slate-300 p-2">経度</th>
                     <th class="border border-slate-300 p-2">メモ</th>
+                    <th class="border border-slate-300 p-2">写真</th>
                   </tr>
                 </thead>
                 <tbody id="report-rows"></tbody>

@@ -41,7 +41,7 @@ service cloud.firestore {
       allow read: if true;
       allow create: if (isAdmin() || isCleanupInputOpen())
         && request.resource.data.keys().hasAll(['date', 'location', 'amount'])
-        && request.resource.data.keys().hasOnly(['date', 'location', 'amount', 'memo'])
+        && request.resource.data.keys().hasOnly(['date', 'location', 'amount', 'memo', 'photoUrl', 'photoPath'])
         && request.resource.data.date == request.time
         && request.resource.data.location is latlng
         && request.resource.data.amount is int
@@ -53,6 +53,16 @@ service cloud.firestore {
             request.resource.data.memo is string
             && request.resource.data.memo.size() <= 200
           )
+        )
+        && (
+          !request.resource.data.keys().hasAny(['photoUrl', 'photoPath'])
+          || (
+            request.resource.data.keys().hasAll(['photoUrl', 'photoPath'])
+            && request.resource.data.photoUrl is string
+            && request.resource.data.photoUrl.size() <= 2000
+            && request.resource.data.photoPath is string
+            && request.resource.data.photoPath.size() <= 300
+          )
         );
       allow update, delete: if false;
     }
@@ -61,7 +71,7 @@ service cloud.firestore {
       allow read: if true;
       allow create: if (isAdmin() || isNatureInputOpen())
         && request.resource.data.keys().hasAll(['observedAt', 'location', 'category', 'name', 'count'])
-        && request.resource.data.keys().hasOnly(['observedAt', 'location', 'category', 'name', 'count', 'memo'])
+        && request.resource.data.keys().hasOnly(['observedAt', 'location', 'category', 'name', 'count', 'memo', 'photoUrl', 'photoPath'])
         && request.resource.data.observedAt == request.time
         && request.resource.data.location is latlng
         && request.resource.data.category in ['bird', 'insect', 'water', 'amphibian', 'plant', 'other']
@@ -76,6 +86,16 @@ service cloud.firestore {
           || (
             request.resource.data.memo is string
             && request.resource.data.memo.size() <= 200
+          )
+        )
+        && (
+          !request.resource.data.keys().hasAny(['photoUrl', 'photoPath'])
+          || (
+            request.resource.data.keys().hasAll(['photoUrl', 'photoPath'])
+            && request.resource.data.photoUrl is string
+            && request.resource.data.photoUrl.size() <= 2000
+            && request.resource.data.photoPath is string
+            && request.resource.data.photoPath.size() <= 300
           )
         );
       allow update, delete: if false;
