@@ -49,7 +49,13 @@ python3 -m http.server 8000
 
 ## GitHub Pagesで公開
 
-1. このフォルダの内容をGitHubリポジトリへ追加します。
+保存先リポジトリ：
+[resuscitationproject-lgtm/bonjono-biolab](https://github.com/resuscitationproject-lgtm/bonjono-biolab)
+
+公開予定URL：
+https://resuscitationproject-lgtm.github.io/bonjono-biolab/
+
+1. このフォルダの内容を上記GitHubリポジトリへ追加します。
 2. リポジトリの `Settings` > `Pages` を開きます。
 3. `Deploy from a branch` を選択し、公開ブランチと `/ (root)` を指定します。
 4. 表示されたHTTPSのURLへアクセスします。
